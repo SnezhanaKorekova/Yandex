@@ -3,6 +3,7 @@ from PyQt5 import uic
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtGui import QPixmap
 import sys
+import requests
 
 
 class MyMainWindow(QMainWindow):
@@ -23,6 +24,18 @@ class MyMainWindow(QMainWindow):
 
 
 if __name__ == '__main__':
+    # coord_x, coord_y = map(float, input('Введите координаты (формат ввода: x y): ').split())
+    # scale_x, scale_y = map(float, input('Введите масштаб (формат ввода: x y): ').split())
+    coord_x, coord_y = 37.677751, 55.757718
+    scale_x, scale_y = 0.016457,0.00619
+
+    map_request = f"http://static-maps.yandex.ru/1.x/?ll={coord_x},{coord_y}&spn={scale_x},{scale_y}&l=map"
+    response = requests.get(map_request)
+
+    map_file = "map.png"
+    with open(map_file, "wb") as file:
+        file.write(response.content)
+
     app = QApplication(sys.argv)
     ex = MyMainWindow()
     ex.show()
