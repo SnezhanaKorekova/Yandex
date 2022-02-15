@@ -1,15 +1,16 @@
 from PyQt5.QtWidgets import QMainWindow, QApplication
 from PyQt5 import uic
-from PyQt5.QtWidgets import QLabel, QPushButton
+from PyQt5.QtWidgets import QLabel, QPushButton, QLineEdit
 from PyQt5.QtGui import QPixmap
 import sys
 from s import picture
+from find_place import find_place
 
 
 class MyMainWindow(QMainWindow):
     def __init__(self):
         self.coord_x, self.coord_y = map(float, input('Введите координаты (формат ввода: x,y): ').split(','))
-        self.scale = float(input('Введите масштаб (формат ввода: x): '))
+        self.scale = float(input('Введите масштаб (формат ввода: x), например, 0.02: '))
         picture(self.coord_x, self.coord_y, self.scale)
         self.space = 'map'
 
@@ -18,7 +19,7 @@ class MyMainWindow(QMainWindow):
 
     def initUI(self):
         self.setWindowTitle('Большая задача по Maps API')
-        self.setGeometry(200, 200, 800, 450)
+        self.setGeometry(200, 200, 800, 500)
 
         self.map_display = QLabel(self)
         self.map_display.move(0, 0)  # размещение карты на окне
@@ -93,19 +94,31 @@ class MyMainWindow(QMainWindow):
 
         self.Hybrid.clicked.connect(self.hybrid)
 
-    def new_map(self):
-        picture(self.coord_x, self.coord_y, self.scale, self.space)
+        # поиск места
+        self.label_find_place = QLineEdit(self)
+        self.label_find_place.resize(590, 35)
+        self.label_find_place.move(5, 460)
+
+        self.button_find_place = QPushButton(self)
+        self.button_find_place.resize(180, 35)
+        self.button_find_place.move(610, 460)
+        self.button_find_place.setText('Поиск места')
+
+        self.button_find_place.clicked.connect(self.find)
+
+    def new_map(self, value_pt=False):
+        picture(self.coord_x, self.coord_y, self.scale, self.space, value_pt=value_pt)
         self.pixmap = QPixmap('map.png')
         self.map_display.setPixmap(self.pixmap)
 
     def more(self):
         if self.scale < 90:
-            self.scale += 0.5
+            self.scale += 0.001
             self.new_map()
 
     def less(self):
-        if self.scale > 0.6:
-            self.scale -= 0.5
+        if self.scale > 0.0011:
+            self.scale -= 0.001
             self.new_map()
 
     def up(self):
@@ -140,6 +153,12 @@ class MyMainWindow(QMainWindow):
     def hybrid(self):
         self.space = 'sat,skl'
         self.new_map()
+
+    def find(self):
+        self.place = self.label_find_place.text()
+        self.coord_x, self.coord_y = find_place(self.place)
+        self.scale = 0.001
+        self.new_map(True)
 
 
 if __name__ == '__main__':
