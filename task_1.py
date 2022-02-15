@@ -10,7 +10,7 @@ from find_place import find_place
 class MyMainWindow(QMainWindow):
     def __init__(self):
         self.coord_x, self.coord_y = map(float, input('Введите координаты (формат ввода: x,y): ').split(','))
-        self.scale = float(input('Введите масштаб (формат ввода: x), например, 0.02: '))
+        self.scale = float(input('Введите масштаб (например, 0.02): '))
         picture(self.coord_x, self.coord_y, self.scale)
         self.space = 'map'
 
@@ -94,20 +94,27 @@ class MyMainWindow(QMainWindow):
 
         self.Hybrid.clicked.connect(self.hybrid)
 
-        # поиск места
+        # поиск и сброс места (метки)
         self.label_find_place = QLineEdit(self)
         self.label_find_place.resize(590, 35)
         self.label_find_place.move(5, 460)
 
         self.button_find_place = QPushButton(self)
-        self.button_find_place.resize(180, 35)
+        self.button_find_place.resize(85, 35)
         self.button_find_place.move(610, 460)
         self.button_find_place.setText('Поиск места')
 
         self.button_find_place.clicked.connect(self.find)
 
-    def new_map(self, value_pt=False):
-        picture(self.coord_x, self.coord_y, self.scale, self.space, value_pt=value_pt)
+        self.button_resset_pt = QPushButton(self)
+        self.button_resset_pt.resize(85, 35)
+        self.button_resset_pt.move(705, 460)
+        self.button_resset_pt.setText('Сброс метки')
+
+        self.button_resset_pt.clicked.connect(self.resset)
+
+    def new_map(self, new_pt=False, del_pt=False):
+        picture(self.coord_x, self.coord_y, self.scale, self.space, new_pt=new_pt, del_pt=del_pt)
         self.pixmap = QPixmap('map.png')
         self.map_display.setPixmap(self.pixmap)
 
@@ -158,7 +165,13 @@ class MyMainWindow(QMainWindow):
         self.place = self.label_find_place.text()
         self.coord_x, self.coord_y = find_place(self.place)
         self.scale = 0.001
-        self.new_map(True)
+        self.new_map(new_pt=True)
+
+    def resset(self):
+        self.place = self.label_find_place.text()
+        self.coord_x, self.coord_y = find_place(self.place)
+        self.scale = 0.001
+        self.new_map(del_pt=True)
 
 
 if __name__ == '__main__':

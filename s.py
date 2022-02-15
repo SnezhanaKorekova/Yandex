@@ -1,18 +1,29 @@
 import requests
 
-last_pt = ''
+list_pt = []
 
 
-def picture(coord_x, coord_y, scale, space='map', value_pt=False):
-    global last_pt
+def picture(coord_x, coord_y, scale, space='map', new_pt=False, del_pt=False):
     if -179 <= coord_x <= 179 and -79 <= coord_y <= 79 and 0 < scale < 90:
         map_request = f"http://static-maps.yandex.ru/1.x/?ll={coord_x},{coord_y}&spn={scale},{scale}&l={space}"
-        if value_pt:  # поставить метку
-            if last_pt == '':
-                last_pt += f'&pt={coord_x},{coord_y},pm2rdm'
-            else:
-                last_pt += f'~{coord_x},{coord_y},pm2rdm'
-        map_request += last_pt
+        # удалить метку
+        if del_pt:
+            while f'{coord_x},{coord_y}' in list_pt:
+                list_pt.remove(f'{coord_x},{coord_y}')
+
+        # поставить метку
+        if new_pt:
+            list_pt.append(f'{coord_x},{coord_y}')
+        if len(list_pt) != 0:
+            pt = '&pt='
+            for i in range(len(list_pt)):
+                if i == 0:
+                    pt += f'{list_pt[i]},pm2rdm'
+                else:
+                    pt += f'~{list_pt[i]},pm2rdm'
+        else:
+            pt = ''
+        map_request += pt
         response = requests.get(map_request)
 
         map_file = "map.png"
