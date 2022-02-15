@@ -124,22 +124,22 @@ class MyMainWindow(QMainWindow):
     def up(self):
         # ll=179,80 max; ll=-179,-80 min
         if self.coord_y < 79:
-            self.coord_y += 0.5
+            self.coord_y += 0.0001
             self.new_map()
 
     def down(self):
         if self.coord_y > -79:
-            self.coord_y -= 0.5
+            self.coord_y -= 0.0001
             self.new_map()
 
     def right(self):
         if self.coord_x < 179:
-            self.coord_x += 0.5
+            self.coord_x += 0.0001
             self.new_map()
 
     def left(self):
         if self.coord_x > -179:
-            self.coord_x -= 0.5
+            self.coord_x -= 0.0001
             self.new_map()
 
     def scheme(self):
