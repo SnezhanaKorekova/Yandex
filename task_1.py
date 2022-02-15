@@ -19,7 +19,7 @@ class MyMainWindow(QMainWindow):
 
     def initUI(self):
         self.setWindowTitle('Большая задача по Maps API')
-        self.setGeometry(200, 200, 800, 500)
+        self.setGeometry(200, 200, 800, 550)
 
         self.map_display = QLabel(self)
         self.map_display.move(0, 0)  # размещение карты на окне
@@ -107,11 +107,16 @@ class MyMainWindow(QMainWindow):
         self.button_find_place.clicked.connect(self.find)
 
         self.button_resset_pt = QPushButton(self)
-        self.button_resset_pt.resize(85, 35)
+        self.button_resset_pt.resize(85, 70)
         self.button_resset_pt.move(705, 460)
-        self.button_resset_pt.setText('Сброс метки')
+        self.button_resset_pt.setText('Сброс\nпоискового\nрезультата')
 
         self.button_resset_pt.clicked.connect(self.resset)
+
+        # отображение полного адреса
+        self.label_full_address = QLabel(self)
+        self.label_full_address.resize(590, 35)
+        self.label_full_address.move(5, 500)
 
     def new_map(self, new_pt=False, del_pt=False):
         picture(self.coord_x, self.coord_y, self.scale, self.space, new_pt=new_pt, del_pt=del_pt)
@@ -163,15 +168,19 @@ class MyMainWindow(QMainWindow):
 
     def find(self):
         self.place = self.label_find_place.text()
-        self.coord_x, self.coord_y = find_place(self.place)
+        self.coord_x, self.coord_y, full_address = find_place(self.place)
         self.scale = 0.001
         self.new_map(new_pt=True)
 
+        self.label_full_address.setText(full_address)
+
     def resset(self):
         self.place = self.label_find_place.text()
-        self.coord_x, self.coord_y = find_place(self.place)
+        self.coord_x, self.coord_y, del_full_address = find_place(self.place)
         self.scale = 0.001
         self.new_map(del_pt=True)
+
+        self.label_full_address.setText('')
 
 
 if __name__ == '__main__':

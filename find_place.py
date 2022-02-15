@@ -15,4 +15,6 @@ def find_place(toponim_to_find):
     pos = json_response['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['Point']['pos']
     coord_x, coord_y = pos.split()
 
-    return float(coord_x), float(coord_y)
+    full_address = json_response['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['metaDataProperty']['GeocoderMetaData']['text']
+
+    return float(coord_x), float(coord_y), full_address
